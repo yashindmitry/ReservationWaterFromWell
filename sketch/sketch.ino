@@ -96,50 +96,50 @@ void loop() {
         char c = client.read();
         if (c == '\n' && currentLineIsBlank) {
           if (requestUrl == "") {
-            client.println("HTTP/1.1 200 OK");
-            client.println("Content-Type: text/html; charset=utf-8");
-            client.println("Connection: close");
+            client.println(F("HTTP/1.1 200 OK"));
+            client.println(F("Content-Type: text/html; charset=utf-8"));
+            client.println(F("Connection: close"));
             client.println();
-            client.println("<!DOCTYPE HTML>");
-            client.println("<html>");
+            client.println(F("<!DOCTYPE HTML>"));
+            client.println(F("<html>"));
             int IsHighWaterLevel = digitalRead(A0); // Читаем данные с датчика уровня воды
             if (IsHighWaterLevel == HIGH) {
-              client.println("<p>Уровень воды в колодце <b>высокий</b></p>");
+              client.println(F("<p>Уровень воды в колодце <b>высокий</b></p>"));
             } else {
-              client.println("<p>Уровень воды в колодце <b>низкий</b></p>");
+              client.println(F("<p>Уровень воды в колодце <b>низкий</b></p>"));
             }
-            client.println("<hr>");
+            client.println(F("<hr>"));
             if (AutomaticControl) {
-              client.println("<p>Автоматическое управление клапанами <b>on</b> <i><a href=\"/acoff\">off</a></i></p>");
+              client.println(F("<p>Автоматическое управление клапанами <b>on</b> <i><a href=\"/acoff\">off</a></i></p>"));
             } else {
-              client.println("<p>Автоматическое управление клапанами <b>off</b> <i><a href=\"/acon\">on</a></i></p>");
+              client.println(F("<p>Автоматическое управление клапанами <b>off</b> <i><a href=\"/acon\">on</a></i></p>"));
             }
             if (RelayWellIsOpen) {
-              client.println("<p>Клапан колодца <b>on</b> <i><a href=\"/rwoff\">off</a></i></p>");
+              client.println(F("<p>Клапан колодца <b>on</b> <i><a href=\"/rwoff\">off</a></i></p>"));
             } else {
-              client.println("<p>Клапан колодца <b>off</b> <i><a href=\"/rwon\">on</a></i></p>");
+              client.println(F("<p>Клапан колодца <b>off</b> <i><a href=\"/rwon\">on</a></i></p>"));
             }
             if (RelayBarrelIsOpen) {
-              client.println("<p>Клапан бочки <b>on</b> <i><a href=\"/rboff\">off</a></i></p>");
+              client.println(F("<p>Клапан бочки <b>on</b> <i><a href=\"/rboff\">off</a></i></p>"));
             } else {
-              client.println("<p>Клапан бочки <b>off</b> <i><a href=\"/rbon\">on</a></i></p>");
+              client.println(F("<p>Клапан бочки <b>off</b> <i><a href=\"/rbon\">on</a></i></p>"));
             }
-            client.println("<hr>");
+            client.println(F("<hr>"));
             if (ReserveAutomaticControl) {
-              client.println("<p>Автоматика резервной емкости <b>on</b> <i><a href=\"/aroff\">off</a></i></p>");
+              client.println(F("<p>Автоматика резервной емкости <b>on</b> <i><a href=\"/aroff\">off</a></i></p>"));
             } else {
-              client.println("<p>Автоматика резервной емкости <b>off</b> <i><a href=\"/aron\">on</a></i></p>");
+              client.println(F("<p>Автоматика резервной емкости <b>off</b> <i><a href=\"/aron\">on</a></i></p>"));
             }
             if (RelayBarrelInIsOpen) {
-              client.println("<p>Клапан наполнения бочки <b>on</b> <i><a href=\"/rbioff\">off</a></i></p>");
+              client.println(F("<p>Клапан наполнения резервной емкости <b>on</b> <i><a href=\"/rbioff\">off</a></i></p>"));
             } else {
-              client.println("<p>Клапан наполнения бочки <b>off</b> <i><a href=\"/rbion\">on</a></i></p>");
+              client.println(F("<p>Клапан наполнения резервной емкости <b>off</b> <i><a href=\"/rbion\">on</a></i></p>"));
             }
-            client.println("</html>");
+            client.println(F("</html>"));
           } else {
-            client.println("HTTP/1.1 307 temporary redirect");
-            client.println("Location: /");
-            client.println("Connection: close");
+            client.println(F("HTTP/1.1 307 temporary redirect"));
+            client.println(F("Location: /"));
+            client.println(F("Connection: close"));
             if (requestUrl == "acoff") {
               AutomaticControl = false;
             } else if (requestUrl == "acon") {
