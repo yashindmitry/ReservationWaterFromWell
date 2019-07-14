@@ -90,12 +90,12 @@ void loop() {
   if (client) {
     boolean currentLineIsBlank = true;
     String header = "";
-    byte requestIndex = 0;
+    String requestUrl = "";
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
         if (c == '\n' && currentLineIsBlank) {
-          if (requestIndex == 0) {
+          if (requestUrl == "") {
             client.println(F("HTTP/1.1 200 OK"));
             client.println(F("Content-Type: text/html; charset=utf-8"));
             client.println(F("Connection: close"));
@@ -110,65 +110,65 @@ void loop() {
             }
             client.println(F("<hr>"));
             if (AutomaticControl) {
-              client.println(F("<p>Автоматическое управление клапанами <b>on</b> <i><a href=\"/1\">off</a></i></p>"));
+              client.println(F("<p>Автоматическое управление клапанами <b>on</b> <i><a href=\"/acoff\">off</a></i></p>"));
             } else {
-              client.println(F("<p>Автоматическое управление клапанами <b>off</b> <i><a href=\"/2\">on</a></i></p>"));
+              client.println(F("<p>Автоматическое управление клапанами <b>off</b> <i><a href=\"/acon\">on</a></i></p>"));
             }
             if (RelayWellIsOpen) {
-              client.println(F("<p>Клапан колодца <b>on</b> <i><a href=\"/3\">off</a></i></p>"));
+              client.println(F("<p>Клапан колодца <b>on</b> <i><a href=\"/rwoff\">off</a></i></p>"));
             } else {
-              client.println(F("<p>Клапан колодца <b>off</b> <i><a href=\"/4\">on</a></i></p>"));
+              client.println(F("<p>Клапан колодца <b>off</b> <i><a href=\"/rwon\">on</a></i></p>"));
             }
             if (RelayBarrelIsOpen) {
-              client.println(F("<p>Клапан бочки <b>on</b> <i><a href=\"/5\">off</a></i></p>"));
+              client.println(F("<p>Клапан бочки <b>on</b> <i><a href=\"/rboff\">off</a></i></p>"));
             } else {
-              client.println(F("<p>Клапан бочки <b>off</b> <i><a href=\"/6\">on</a></i></p>"));
+              client.println(F("<p>Клапан бочки <b>off</b> <i><a href=\"/rbon\">on</a></i></p>"));
             }
             client.println(F("<hr>"));
             if (ReserveAutomaticControl) {
-              client.println(F("<p>Автоматика резервной емкости <b>on</b> <i><a href=\"/7\">off</a></i></p>"));
+              client.println(F("<p>Автоматика резервной емкости <b>on</b> <i><a href=\"/aroff\">off</a></i></p>"));
             } else {
-              client.println(F("<p>Автоматика резервной емкости <b>off</b> <i><a href=\"/8\">on</a></i></p>"));
+              client.println(F("<p>Автоматика резервной емкости <b>off</b> <i><a href=\"/aron\">on</a></i></p>"));
             }
             if (RelayBarrelInIsOpen) {
-              client.println(F("<p>Клапан наполнения резервной емкости <b>on</b> <i><a href=\"/9\">off</a></i></p>"));
+              client.println(F("<p>Клапан наполнения резервной емкости <b>on</b> <i><a href=\"/rbioff\">off</a></i></p>"));
             } else {
-              client.println(F("<p>Клапан наполнения резервной емкости <b>off</b> <i><a href=\"/10\">on</a></i></p>"));
+              client.println(F("<p>Клапан наполнения резервной емкости <b>off</b> <i><a href=\"/rbion\">on</a></i></p>"));
             }
             client.println(F("</html>"));
           } else {
             client.println(F("HTTP/1.1 307 temporary redirect"));
             client.println(F("Location: /"));
             client.println(F("Connection: close"));
-            if (requestIndex == 1) {
+            if (requestUrl == "acoff") {
               AutomaticControl = false;
-            } else if (requestIndex == 2) {
+            } else if (requestUrl == "acon") {
               AutomaticControl = true;
-            } else if (requestIndex == 3) {
+            } else if (requestUrl == "rwoff") {
               // Закрываем кран колодца
               digitalWrite(RelayWell, HIGH);
               RelayWellIsOpen = false;
-            } else if (requestIndex == 4) {
+            } else if (requestUrl == "rwon") {
               // Открываем кран колодца
               digitalWrite(RelayWell, LOW);
               RelayWellIsOpen = true;
-            } else if (requestIndex == 5) {
+            } else if (requestUrl == "rboff") {
               // Закрываем кран бочки
               digitalWrite(RelayBarrelOut, LOW);
               RelayBarrelIsOpen = false;
-            } else if (requestIndex == 6) {
+            } else if (requestUrl == "rbon") {
               // Открываем кран бочки
               digitalWrite(RelayBarrelOut, HIGH);
               RelayBarrelIsOpen = true;
-            } else if (requestIndex == 7) {
+            } else if (requestUrl == "aroff") {
               ReserveAutomaticControl = false;
-            } else if (requestIndex == 8) {
+            } else if (requestUrl == "aron") {
               ReserveAutomaticControl = true;
-            } else if (requestIndex == 9) {
+            } else if (requestUrl == "rbioff") {
               // Закрываем кран наполнения бочки
               digitalWrite(RelayBarrelIn, LOW);
               RelayBarrelInIsOpen = false;
-            } else if (requestIndex == 10) {
+            } else if (requestUrl == "rbion") {
               // Открываем кран rbioff бочки
               digitalWrite(RelayBarrelIn, HIGH);
               RelayBarrelInIsOpen = true;
@@ -178,7 +178,7 @@ void loop() {
         }
         if (c == '\n') {
           if (header.substring(0, 4) == "GET ") {
-            requestIndex = header.substring(5, header.indexOf(" ", 4)).toInt();
+            requestUrl = header.substring(5, header.indexOf(" ", 4));
           }
           header = "";
           currentLineIsBlank = true;
